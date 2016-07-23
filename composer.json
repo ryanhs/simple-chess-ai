@@ -1,0 +1,14 @@
+{
+    "name": "ryanhs/simple-chess-ai",
+    "description": "simple chess AI, only using simplified as evaluation, in UCI",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ryan hs",
+            "email": "mr.ryansilalahi@gmail.com"
+        }
+    ],
+    "require": {
+        "ryanhs/chess.php": "^1.0"
+    }
+}
