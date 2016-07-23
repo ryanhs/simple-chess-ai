@@ -8,6 +8,11 @@
             "email": "mr.ryansilalahi@gmail.com"
         }
     ],
+    "autoload": {
+		"psr-4": {
+			"Ryanhs\\SimpleChessAI\\": "src/"
+		}
+	},
     "require": {
         "ryanhs/chess.php": "^1.0"
     }

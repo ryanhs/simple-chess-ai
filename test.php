@@ -5,11 +5,12 @@ use Ryanhs\Chess\Chess;
 
 
 // some config here
-$engineCommand = 'stockfish';
-$depth = 2;
+$engineCommand = 'php uci.php';
+$depth = 1;
 $fen = (new Chess())->fen();
-echo $fen;exit;
 
+// set output raw
+header('Content-Type: text/plain');
 
 // load engine
 $descriptorspec = array(
@@ -26,15 +27,19 @@ if (!is_resource($process)) {
 
 // process move, code referenced from: https://github.com/antiproton/Web-GUI-for-stockfish-chess
 fwrite($pipes[0], "uci\n");
+usleep(100000);
 fwrite($pipes[0], "ucinewgame\n");
+usleep(100000);
 fwrite($pipes[0], "isready\n");
+usleep(100000);
 fwrite($pipes[0], "position fen $fen\n");
+usleep(100000);
 fwrite($pipes[0], "go depth $depth\n");
 
 // parse move, code referenced from: https://github.com/antiproton/Web-GUI-for-stockfish-chess
 $str="";
 while(true){
-	usleep(100);
+	usleep(1000);
 	$s = fgets($pipes[1],4096);
 	echo $s;
 	

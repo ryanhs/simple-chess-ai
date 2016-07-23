@@ -10,10 +10,10 @@ when this project created.
 this project use UCI format, so you can do a bit using UCI command
 
 ## Example to run
-run this by ``php simple-chess-ai/ai.php``  
+run this by ``php simple-chess-ai/uci.php``  
   
 after the program run, you can type following command:  
 ``ucinewgame``  
 ``isready``  
-``position fen $fen`` exp: ``position rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 ``  
+``position fen $fen`` exp: ``position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1``  
 ``go depth $depth`` exp: ``go depth 2``  
