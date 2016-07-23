@@ -9,7 +9,7 @@ yeah it doesn't created to be strong AI ofcourse, due to poor performance of PHP
 - using simple alpha-beta pruning
 
 ### Evaluation
-- using simplified [https://chessprogramming.wikispaces.com/Simplified+evaluation+function](chessprogramming simplified)
+- using simplified [https://chessprogramming.wikispaces.com/Simplified+evaluation+function]
 
 ## UCI  
 this project use UCI format, so you can do a bit using UCI command
