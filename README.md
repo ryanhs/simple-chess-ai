@@ -30,3 +30,6 @@ uciok
 readyok
 bestmove e2e4
 ```
+
+### License
+MIT
