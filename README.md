@@ -17,3 +17,11 @@ after the program run, you can type following command:
 ``isready``  
 ``position fen $fen`` exp: ``position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1``  
 ``go depth $depth`` exp: ``go depth 2``  
+
+## Example output
+```text
+SimpleChessAI in PHP by Ryan H. Silalahi
+uciok
+readyok
+bestmove e2e4
+```
