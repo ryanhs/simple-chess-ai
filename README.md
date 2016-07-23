@@ -5,6 +5,9 @@
 this project show how simple chess AI can be implemented in PHP,  
 yeah it doesn't created to be strong AI ofcourse, due to poor performance of PHP compared to C, when this project created.  
 
+#### specification
+hmm maybe not much, but i do writing this in PHP 5.6
+
 ### Algorithm
 - using simple alpha-beta pruning [Wikipedia - Alpha–beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning)
 
