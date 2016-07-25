@@ -37,7 +37,8 @@ class AI extends \Ryanhs\Chess\Chess {
 		if (time() > $this->lastTimestamp) {
 			$s = time() - $this->lastTimestamp;
 			$nodes = ceil($this->nodes / $s);
-			echo "info string ".$nodes." nodes/s".PHP_EOL;
+			$totalNodes = array_sum($this->nodesHistory) + $this->nodes;
+			echo "info string ".$nodes." nodes/s"." from ".$totalNodes." nodes".PHP_EOL;
 			$this->nodesHistory[] = $this->nodes;
 			$this->nodes = 0;
 			$this->lastTimestamp = time();
