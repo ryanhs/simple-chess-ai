@@ -3,97 +3,79 @@
 namespace Ryanhs\SimpleChessAI;
 class AI extends \Ryanhs\Chess\Chess {
 	
-	public $nodes;
-	private $nodesHistory;
-	
 	public function run($depth)
 	{
-		if ($depth == 0) {					
-			// get long algebraic move
-			$this->move($this->moves()[0]);
-			$algebraicMove = $this->undo();
-			echo 'bestmove '.$algebraicMove['from'].$algebraicMove['to'].PHP_EOL;
-			return;
-		}
-		
-		
-		$this->nodesHistory = [];
-		$this->nodes = 0;
-		$this->lastTimestamp = time();
-		$bestMove = $this->alphabetaMax(
-						['move' => null, 'evalScore' => -1000000], 
-						['move' => null, 'evalScore' => 1000000], 
-						$depth
-					);
-		$this->nodes = array_sum($this->nodesHistory);
+		$nodes = $this->generateNodes($depth);
+		$bestMove = self::alphaBeta($nodes, '-,-,-1000000', '-,-,1000000', true);
+		$sanMove = explode(',', $bestMove)[0];
 		
 		// get long algebraic move
-		$this->makeMove($bestMove['move']);
+		$this->move($sanMove);
 		$algebraicMove = $this->undo();
 		echo 'bestmove '.$algebraicMove['from'].$algebraicMove['to'].PHP_EOL;
 	}
 	
-	private function debug() {
-		if (time() > $this->lastTimestamp) {
-			$s = time() - $this->lastTimestamp;
-			$nodes = ceil($this->nodes / $s);
-			echo "info string ".$nodes." nodes/s".PHP_EOL;
-			$this->nodesHistory[] = $this->nodes;
-			$this->nodes = 0;
-			$this->lastTimestamp = time();
+	public static function alphaBeta($node, $alpha, $beta, $maximisingPlayer)
+	{
+		$bestMove = null;
+		if (!is_array($node)) {
+			$bestMove = $node;
 		}
-		
-		$this->nodes++;
+		else if ($maximisingPlayer) {
+			$bestMove = $alpha;
+			
+			// Recurse for all children of node.
+			foreach ($node as $k => $v) {
+				$childValue = self::alphaBeta($v, $bestMove, $beta, false);
+				$tmpBestMove = max(explode(',',$bestMove)[2], explode(',',$k)[2]);
+				$bestMove = explode(',',$bestMove)[2] == $tmpBestMove ? $bestMove : $k;
+				
+				if (explode(',',$beta)[2] <= explode(',',$bestMove)[2]) {
+					break;
+				}
+			}
+		}
+		else {
+			$bestMove = $beta;
+			
+			// Recurse for all children of node.
+			foreach ($node as $k => $v) {
+				$childValue = self::alphaBeta($v, $alpha, $bestMove, true);
+				$tmpBestMove = min(explode(',',$bestMove)[2], explode(',',$k)[2]);
+				$bestMove = explode(',',$bestMove)[2] == $tmpBestMove ? $bestMove : $k;
+				
+				if (explode(',',$bestMove)[2] <= explode(',',$alpha)[2]) {
+					break;
+				}
+			}
+		}
+		return $bestMove;
 	}
 	
-	// pseudocode from: https://chessprogramming.wikispaces.com/Alpha-Beta
-	// Max versus Min
-	public function alphabetaMax($alpha, $beta, $depth)
+	public function generateNodes($depth)
 	{
-		$this->debug();
-		if ($depth == 0 || $this->gameOver()) {
-			return ['evalScore' => $this->evaluate()];
+		$result = [];
+		$nodes = 0;
+		
+		$moves = $this->moves([ 'legal' => true ]);
+		$color = $this->turn();
+		for ($i = 0, $len = count($moves); $i < $len; $i++) {
+			$this->move($moves[$i]);
+			
+			if (!$this->kingAttacked($color)) {
+				
+				$calculatedMove = $moves[$i].','.$this->fen().','.$this->evaluate();
+				
+				if ($depth - 1 > 0) {
+					$result[$calculatedMove] = $this->generateNodes($depth - 1);
+				} else {
+					$result[$calculatedMove] = $calculatedMove;
+				}
+			}
+			$this->undoMove();
 		}
 		
-		$moves = $this->generateMoves();
-		foreach ($moves as $move) {
-			$this->makeMove($move);
-			$score = $this->alphabetaMin($alpha, $beta, $depth - 1);
-					 $this->undo();
-					 
-			if ($score['evalScore'] >= $beta['evalScore']){
-				return $beta;
-			}
-			if ($score['evalScore'] > $alpha['evalScore']){
-				$alpha = ['move' => $move, 'evalScore' => $score['evalScore']];
-			}
-		}
-		return $alpha;
-	}
-	
-	// pseudocode from: https://chessprogramming.wikispaces.com/Alpha-Beta
-	// Max versus Min
-	public function alphabetaMin($alpha, $beta, $depth)
-	{
-		$this->debug();
-		if ($depth == 0 || $this->gameOver()) {
-			return ['evalScore' => -$this->evaluate()];
-		}
-		
-		$moves = $this->generateMoves();
-		foreach ($moves as $move) {
-			$this->makeMove($move);
-			$score = $this->alphabetaMax($alpha, $beta, $depth - 1);
-					 $this->undo();
-					 
-			if ($score['evalScore'] <= $alpha['evalScore']){
-				return $alpha;
-			}
-			if ($score['evalScore'] < $beta['evalScore']){
-				$beta = ['move' => $move, 'evalScore' => $score['evalScore']];
-			}
-		}
-		return $beta;
+		return $result;
 	}
 	
 	public function evaluate()
